@@ -28,11 +28,12 @@ namespace GopherSharp
 
             StringBuilder bodyBuilder = new StringBuilder();
             byte[] recvBuf = new byte[256];
+            int count = 0;
             do
             {
-                int count = stream.Read(recvBuf, 0, recvBuf.Length);
+                count = stream.Read(recvBuf, 0, recvBuf.Length);
                 bodyBuilder.Append(Encoding.ASCII.GetString(recvBuf, 0, count));
-            } while (stream.DataAvailable);
+            } while (count > 0);
 
             Host = host;
             Selector = selector;
