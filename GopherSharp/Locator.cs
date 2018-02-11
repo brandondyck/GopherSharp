@@ -28,5 +28,7 @@ namespace GopherSharp
             Port = port;
             Type = type;
         }
+
+        public override string ToString() => String.Format("{0} {1} {2} {3}", Host, Selector, Port, Type);
     }
 }

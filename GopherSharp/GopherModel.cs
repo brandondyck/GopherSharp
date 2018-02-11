@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Net;
@@ -13,9 +14,24 @@ namespace GopherSharp
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private void NotifyPropertyChanged(string propName)
+        private readonly ObservableCollection<Locator> history ;
+        private readonly ReadOnlyObservableCollection<Locator> historyReadOnly;
+        public ReadOnlyObservableCollection<Locator> History {
+            get => historyReadOnly;
+        }
+
+        public GopherModel()
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+            history = new ObservableCollection<Locator>();
+            historyReadOnly = new ReadOnlyObservableCollection<Locator>(history);
+        }
+
+        private void NotifyPropertiesChanged(params string[] propNames)
+        {
+            foreach (string name in propNames)
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+            }
         }
 
         public void Load(Locator locator)
@@ -35,12 +51,10 @@ namespace GopherSharp
                 bodyBuilder.Append(Encoding.ASCII.GetString(recvBuf, 0, count));
             } while (count > 0);
 
-            this.CurrentLocator = locator;
+            history.Add(locator);
 
             Body = bodyBuilder.ToString();
         }
-
-        private Locator CurrentLocator;
 
         private string body;
         public string Body
@@ -49,23 +63,8 @@ namespace GopherSharp
             private set
             {
                 body = value;
-                NotifyPropertyChanged("Body");
+                NotifyPropertiesChanged("Body");
             }
-        }
-
-        public string Host
-        {
-            get => CurrentLocator.Host;
-        }
-
-        public string Selector
-        {
-            get => CurrentLocator.Selector;
-        }
-
-        public UInt16 Port
-        {
-            get => CurrentLocator.Port;
         }
     }
 }
