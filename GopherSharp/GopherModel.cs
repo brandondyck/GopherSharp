@@ -18,12 +18,12 @@ namespace GopherSharp
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
         }
 
-        public void Load(string host, string selector, UInt16 port)
+        public void Load(Locator locator)
         {
-            TcpClient conn = new TcpClient(host, port);
+            TcpClient conn = new TcpClient(locator.Host, locator.Port);
             NetworkStream stream = conn.GetStream();
 
-            byte[] selectorMsg = Encoding.ASCII.GetBytes(selector + "\r\n");
+            byte[] selectorMsg = Encoding.ASCII.GetBytes(locator.Selector + "\r\n");
             stream.Write(selectorMsg, 0, selectorMsg.Length);
 
             StringBuilder bodyBuilder = new StringBuilder();
@@ -35,12 +35,12 @@ namespace GopherSharp
                 bodyBuilder.Append(Encoding.ASCII.GetString(recvBuf, 0, count));
             } while (count > 0);
 
-            Host = host;
-            Selector = selector;
-            Port = port;
+            this.CurrentLocator = locator;
 
             Body = bodyBuilder.ToString();
         }
+
+        private Locator CurrentLocator;
 
         private string body;
         public string Body
@@ -53,36 +53,19 @@ namespace GopherSharp
             }
         }
 
-        private string host;
         public string Host
         {
-            get => host;
-            private set
-            {
-                host = value;
-                NotifyPropertyChanged("Host");
-            }
+            get => CurrentLocator.Host;
         }
 
-        private string selector;
         public string Selector
         {
-            get => selector;
-            private set
-            {
-                selector = value;
-                NotifyPropertyChanged("Selector");
-            }
+            get => CurrentLocator.Selector;
         }
 
-        private UInt16 port;
         public UInt16 Port
         {
-            get => port;
-            private set {
-                port = value;
-                NotifyPropertyChanged("Port");
-            }
+            get => CurrentLocator.Port;
         }
     }
 }

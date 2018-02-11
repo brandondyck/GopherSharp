@@ -36,7 +36,7 @@ namespace GopherSharp
 
         private void GoButton_Click(object sender, RoutedEventArgs e)
         {
-            Document.Load(hostInput.Text, selectorInput.Text, UInt16.Parse(portInput.Text));
+            Document.Load(new Locator(hostInput.Text, selectorInput.Text, UInt16.Parse(portInput.Text), DocumentType.Menu));
         }
     }
 }
