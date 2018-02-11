@@ -2,9 +2,11 @@
 
 namespace GopherSharp
 {
-    public enum DocumentType
+    public enum DocumentType : byte
     {
-        Menu,
+        Text = (byte)'0',
+        Menu = (byte)'1',
+        Info = (byte)'i',
     }
 
     public class Locator
@@ -25,6 +27,6 @@ namespace GopherSharp
             Type = type;
         }
 
-        public override string ToString() => String.Format("{0} {1} {2} {3}", Host, Selector, Port, Type);
+        public override string ToString() => String.Format("{0} {1} {2} {3}", Host, Selector, Port, ((char)Type).ToString());
     }
 }
