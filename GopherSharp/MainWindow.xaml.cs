@@ -23,7 +23,20 @@ namespace GopherSharp
 
         private void GoButton_Click(object sender, RoutedEventArgs e)
         {
-            Document.Load(new Locator(hostInput.Text, selectorInput.Text, UInt16.Parse(portInput.Text), DocumentType.Menu));
+            string portString = portInput.Text;
+            ushort port;
+            if (portString == "")
+            {
+                port = 70;
+            }
+            else if (ushort.TryParse(portString, out port))
+            {
+                Document.Load(new Locator(hostInput.Text, selectorInput.Text, port, DocumentType.Menu));
+            }
+            else
+            {
+                MessageBox.Show("Port must be blank or 1–65535");
+            }
         }
     }
 }
